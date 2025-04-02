@@ -1,4 +1,3 @@
-// controllers/products.js
 const mongodb = require('../data/database');
 const ObjectId = require('mongodb').ObjectId;
 

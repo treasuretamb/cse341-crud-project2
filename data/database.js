@@ -1,4 +1,3 @@
-// data/database.js
 const dotenv = require('dotenv');
 dotenv.config();
 const { MongoClient } = require('mongodb');
