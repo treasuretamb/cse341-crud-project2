@@ -7,7 +7,7 @@ const doc = {
     version: '1.0.0'
   },
   host: 'cse341-crud-project2-u5wz.onrender.com',
-  basePath: '/contacts',
+  basePath: '/',
   schemes: ['https']
 };
 
