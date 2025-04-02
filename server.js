@@ -14,6 +14,9 @@ app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
 
+const cors = require('cors');
+app.use(cors());
+
 
 // Mount contacts routes
 app.use('/contacts', require('./routes/contacts'));
