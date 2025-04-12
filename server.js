@@ -13,6 +13,11 @@ const mongodb = require('./data/database');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// If in production, trust the proxy (important for secure cookies behind a reverse proxy)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Database connection
 mongodb.initDb((err) => {
   if (err) {
@@ -33,7 +38,7 @@ const sessionConfig = {
     autoRemove: 'native'
   }),
   cookie: {
-    secure: true,
+    secure: process.env.NODE_ENV === 'production', // true in production (requires HTTPS)
     httpOnly: true,
     sameSite: 'none',
     maxAge: 24 * 60 * 60 * 1000,
@@ -76,7 +81,7 @@ app.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/docs' }),
   (req, res) => {
     res.cookie('session_verified', 'true', {
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'none',
       domain: 'cse341-crud-project2-u5wz.onrender.com'
     });
@@ -91,6 +96,7 @@ app.get('/auth/status', (req, res) => {
   });
 });
 
+// Logout route
 app.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ message: 'Logout failed' });
@@ -104,12 +110,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
-// Server start
+// Root redirect
+app.get('/', (req, res) => res.redirect('/docs'));
+
+// Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Session Store: ${sessionConfig.store.constructor.name}`);
 });
-
-// Root redirect
-app.get('/', (req, res) => res.redirect('/docs'));
