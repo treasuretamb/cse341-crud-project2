@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth Test</title>
+</head>
+<body>
+  <h1>Authentication Test</h1>
+  <div id="status">Not logged in</div>
+  <button onclick="login()">Login with GitHub</button>
+  <button onclick="logout()">Logout</button>
+
+  <script>
+    function updateStatus() {
+      fetch('/auth/status')
+        .then(response => response.json())
+        .then(data => {
+          const statusDiv = document.getElementById('status');
+          statusDiv.textContent = data.authenticated 
+            ? `Logged in as: ${data.user?.username || 'GitHub User'}` 
+            : 'Not logged in';
+        });
+    }
+
+    function login() {
+  // Explicit redirect URI with encoding
+  window.location.href = '/auth/github?redirect_uri=' + 
+    encodeURIComponent('http://localhost:3000/auth/github/callback');
+}
+
+    function logout() {
+      fetch('/auth/logout', { credentials: 'include' })
+        .then(() => {
+          updateStatus();
+          window.location.reload();
+        });
+    }
+
+    // Initial check
+    updateStatus();
+    setInterval(updateStatus, 3000);
+  </script>
+</body>
+</html>

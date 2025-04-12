@@ -11,7 +11,7 @@ const getAllContacts = async (req, res) => {
     res.status(200).json(contacts);
   } catch (error) {
     console.error("Error fetching contacts:", error);
-    res.status(500).json({ message: "Error fetching contacts", error });
+    res.status(500).json({ message: "Error fetching contacts", error: error.message });
   }
 };
 
@@ -26,13 +26,13 @@ const getSingleContact = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(contact);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching contact', error });
+    console.error("Error fetching contact:", error);
+    res.status(500).json({ message: 'Error fetching contact', error: error.message });
   }
 };
 
-// POST: Create a new contact. All fields are required.
+// POST Create a new contact. All fields are required
 const createContact = async (req, res) => {
-  // Validate input
   const { firstName, lastName, email, favoriteColor, birthday } = req.body;
   if (!firstName || !lastName || !email || !favoriteColor || !birthday) {
     return res.status(400).json({ message: "All fields are required" });
@@ -41,17 +41,17 @@ const createContact = async (req, res) => {
     const db = mongodb.getDatabase();
     const newContact = { firstName, lastName, email, favoriteColor, birthday };
     const result = await db.collection("contacts").insertOne(newContact);
+    res.setHeader("Content-Type", "application/json");
     res.status(201).json({ id: result.insertedId });
   } catch (error) {
     console.error("Error creating contact:", error);
-    res.status(500).json({ message: "Error creating contact", error });
+    res.status(500).json({ message: "Error creating contact", error: error.message });
   }
 };
 
-// PUT: Update a contact by id.
+// PUT Update a contact by id
 const updateContact = async (req, res) => {
   const contactId = req.params.id;
-  // Validate input – you might allow partial updates; for now, require all fields
   const { firstName, lastName, email, favoriteColor, birthday } = req.body;
   if (!firstName || !lastName || !email || !favoriteColor || !birthday) {
     return res.status(400).json({ message: "All fields are required for update" });
@@ -65,14 +65,15 @@ const updateContact = async (req, res) => {
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Contact not found" });
     }
+    res.setHeader("Content-Type", "application/json");
     res.status(200).json({ message: "Contact updated successfully" });
   } catch (error) {
     console.error("Error updating contact:", error);
-    res.status(500).json({ message: "Error updating contact", error });
+    res.status(500).json({ message: "Error updating contact", error: error.message });
   }
 };
 
-// DELETE: Delete a contact by id.
+// DELETE Delete a contact by id
 const deleteContact = async (req, res) => {
   const contactId = req.params.id;
   try {
@@ -81,10 +82,11 @@ const deleteContact = async (req, res) => {
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "Contact not found" });
     }
+    res.setHeader("Content-Type", "application/json");
     res.status(200).json({ message: "Contact deleted successfully" });
   } catch (error) {
     console.error("Error deleting contact:", error);
-    res.status(500).json({ message: "Error deleting contact", error });
+    res.status(500).json({ message: "Error deleting contact", error: error.message });
   }
 };
 
