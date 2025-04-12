@@ -1,14 +1,17 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 
+// Debugging check
+console.log('GitHub Client ID:', process.env.GITHUB_CLIENT_ID ? '***' : 'MISSING');
+
 passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: process.env.CALLBACK_URL || 'https://cse341-crud-project2-u5wz.onrender.com/auth/github/callback',
+  callbackURL: process.env.CALLBACK_URL,
   passReqToCallback: true
 }, (req, accessToken, refreshToken, profile, done) => {
   try {
-    if (req.query.state) profile.state = req.query.state; // For Swagger UI
+    if (req.query.state) profile.state = req.query.state;
     return done(null, profile);
   } catch (error) {
     return done(error);
