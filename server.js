@@ -24,18 +24,22 @@ mongodb.initDb((err) => {
 // Session configuration
 const sessionConfig = {
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URL,
     collectionName: 'sessions',
-    ttl: 24 * 60 * 60 // 1 day
+    ttl: 24 * 60 * 60, // 1 day
+    autoRemove: 'native'
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    maxAge: 24 * 60 * 60 * 1000
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000,
+    domain: process.env.NODE_ENV === 'production' 
+      ? 'cse341-crud-project2-u5wz.onrender.com' 
+      : 'localhost'
   }
 };
 
@@ -48,10 +52,12 @@ app.use(passport.session());
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://cse341-crud-project2-u5wz.onrender.com'
-    : 'http://localhost:3000',
-  credentials: true
+  origin: [
+    'https://cse341-crud-project2-u5wz.onrender.com',
+    'http://localhost:3000'
+  ],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 };
 app.use(cors(corsOptions));
 
@@ -69,6 +75,11 @@ app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/docs' }),
   (req, res) => {
+    res.cookie('session_verified', 'true', {
+      secure: true,
+      sameSite: 'none',
+      domain: 'cse341-crud-project2-u5wz.onrender.com'
+    });
     req.session.save(() => res.redirect('/docs'));
   }
 );
@@ -97,6 +108,7 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Session Store: ${sessionConfig.store.constructor.name}`);
 });
 
 // Root redirect

@@ -1,27 +1,23 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 
-// Use hardcoded values directly
 passport.use(new GitHubStrategy({
-  clientID: 'Ov23liz3SrRUory5wXhu',
-  clientSecret: '5e0b8b65a9bf0d898a7a510cef2f11897f82c0b3',
-  callbackURL: 'https://cse341-crud-project2-u5wz.onrender.com/auth/github/callback',
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: process.env.CALLBACK_URL,
+  scope: ['user:email'],
   passReqToCallback: true
 }, (req, accessToken, refreshToken, profile, done) => {
-  try {
-    if (req.query.state) profile.state = req.query.state;
-    return done(null, profile);
-  } catch (error) {
-    return done(error);
-  }
+  req.session.authProfile = profile;
+  return done(null, profile);
 }));
 
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user.id);
 });
 
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
+passport.deserializeUser(async (id, done) => {
+  done(null, { id });
 });
 
 module.exports = passport;
