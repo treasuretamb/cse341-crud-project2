@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const productsController = require('../controllers/products'); // Fixed controller reference
+const productsController = require('../controllers/products'); // Correct controller reference
 const ensureAuthenticated = require('../middleware/auth');
 
 // Public access GET all products and GET product by id

@@ -24,7 +24,7 @@
     }
 
     function login() {
-      // Dynamically create redirect callback URL based on current origin.
+      // Generate the callback URL based on the current origin.
       const callbackUrl = window.location.origin + '/auth/github/callback';
       window.location.href = '/auth/github?redirect_uri=' + encodeURIComponent(callbackUrl);
     }

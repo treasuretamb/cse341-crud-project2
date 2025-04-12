@@ -13,7 +13,7 @@ const mongodb = require('./data/database');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// If in production, trust the proxy (important for secure cookies behind a reverse proxy)
+// In production, trust the proxy so that secure cookies work behind the Render proxy.
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
@@ -38,12 +38,12 @@ const sessionConfig = {
     autoRemove: 'native'
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // true in production (requires HTTPS)
+    secure: process.env.NODE_ENV === 'production', // true in production
     httpOnly: true,
     sameSite: 'none',
     maxAge: 24 * 60 * 60 * 1000,
-    domain: process.env.NODE_ENV === 'production' 
-      ? 'cse341-crud-project2-u5wz.onrender.com' 
+    domain: process.env.NODE_ENV === 'production'
+      ? 'cse341-crud-project2-u5wz.onrender.com'
       : 'localhost'
   }
 };
