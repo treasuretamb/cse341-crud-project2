@@ -13,7 +13,7 @@
 
   <script>
     function updateStatus() {
-      fetch('/auth/status')
+      fetch('/auth/status', { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
           const statusDiv = document.getElementById('status');
@@ -24,10 +24,10 @@
     }
 
     function login() {
-  // Explicit redirect URI with encoding
-  window.location.href = '/auth/github?redirect_uri=' + 
-    encodeURIComponent('http://localhost:3000/auth/github/callback');
-}
+      // Dynamically create redirect callback URL based on current origin.
+      const callbackUrl = window.location.origin + '/auth/github/callback';
+      window.location.href = '/auth/github?redirect_uri=' + encodeURIComponent(callbackUrl);
+    }
 
     function logout() {
       fetch('/auth/logout', { credentials: 'include' })

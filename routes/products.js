@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const productsController = require('../controllers/products');
+const productsController = require('../controllers/products'); // Fixed controller reference
 const ensureAuthenticated = require('../middleware/auth');
 
-// Public routes
+// Public access GET all products and GET product by id
 router.get('/', productsController.getAllProducts);
 router.get('/:id', productsController.getSingleProduct);
 
-// Protected routes
+// Protected routes require authentication to create, update, or delete products
 router.post('/', ensureAuthenticated, productsController.createProduct);
 router.put('/:id', ensureAuthenticated, productsController.updateProduct);
 router.delete('/:id', ensureAuthenticated, productsController.deleteProduct);
