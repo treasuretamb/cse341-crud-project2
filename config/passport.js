@@ -11,9 +11,9 @@ if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
 }
 
 passport.use(new GitHubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: process.env.CALLBACK_URL,
+  clientID: 'Ov23liz3SrRUory5wXhu',
+  clientSecret: '5e0b8b65a9bf0d898a7a510cef2f11897f82c0b3', 
+  callbackURL: 'https://cse341-crud-project2-u5wz.onrender.com/auth/github/callback',
   passReqToCallback: true
 }, (req, accessToken, refreshToken, profile, done) => {
   try {
