@@ -3,6 +3,12 @@ const GitHubStrategy = require('passport-github2').Strategy;
 
 // Debugging check
 console.log('GitHub Client ID:', process.env.GITHUB_CLIENT_ID ? '***' : 'MISSING');
+console.log('Callback URL:', process.env.CALLBACK_URL || 'Not set');
+
+// Throw error if missing
+if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
+  throw new Error('GitHub OAuth credentials missing!');
+}
 
 passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
